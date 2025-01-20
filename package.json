@@ -1,0 +1,21 @@
+{
+  "name": "project_website",
+  "version": "1.0.0",
+  "main": "test_connection.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node main.js",
+    "init_db": "node database/setupDatabase.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security"
+  }
+}
