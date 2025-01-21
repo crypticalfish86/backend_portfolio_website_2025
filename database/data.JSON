@@ -5,7 +5,40 @@
             "Title": "Test Project",
             "Finished": "2025-01-20",
             "Complexity": 2
+        },
+        {
+            "ProjectID": 2,
+            "Title": "Test Project2",
+            "Finished": "2025-01-21",
+            "Complexity": 4
+        }
+    ],
 
+    "Project_Details": [
+        {
+            "ProjectID": 1,
+            "DetailID": 1,
+            "Description": "test1"
+        },
+        {
+            "ProjectID": 2,
+            "DetailID": 1,
+            "Description": "test2"
+        }
+    ],
+
+    "Images": [
+        {
+            "ProjectID": 1,
+            "DetailID": 1,
+            "Image_Title": "Test1",
+            "Image_URL": "Test1"
+        },
+        {
+            "ProjectID": 2,
+            "DetailID": 1,
+            "Image_Title": "Test2",
+            "Image_URL": "Test2"
         }
     ]
 }
