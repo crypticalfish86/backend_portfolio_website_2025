@@ -1,3 +1,8 @@
+/*
+    This File is the setup of the database (it currently only sets up the Project table but more will be added)
+    Refer to the "Project_Database_ER_Diagram.png" for information on what the database should look like
+*/
+
 const fs = require('fs');
 const mysql = require('mysql');
 
@@ -66,19 +71,11 @@ fs.readFile('database/data.JSON', 'utf-8', (error, data) =>
                                         //check if tuple was successfully inserted
                                         if (error) throw error;
                                         console.log("Data for tuple successfully added: ", results);
-                                    }
-                                )
-                            }
-
-                        )
+                                    })
+                            })
 
                         connection.end(); //end the connection (if you have more tables you should move this)
-                    }
-
-                )
-            }
-
-        )
-    }
-)
+                    })
+            })
+})
 
