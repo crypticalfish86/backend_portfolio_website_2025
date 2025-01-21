@@ -24,7 +24,7 @@ const projectInsertProjectSQL =
 `;
 
 
-//connect to my XAMPP database (ensure its running)
+//create the connection to my XAMPP database (ensure its running)
 const connection = mysql.createConnection(
     {
         host: 'localhost',
@@ -34,48 +34,51 @@ const connection = mysql.createConnection(
     }
 );
 
-connection.connect();
+connection.connect(); //attempt to connect to the database
 
-//read the file and insert the data in data.JSON into the XAMPP database
-fs.readFile('database/data.JSON', 'utf-8', (error, data) =>
+//This promise chain drops all tables, recreates them and then adds all data into the database stored in the JSON file
+fs.promises.readFile('database/data.JSON', 'utf-8')
+.then( JSONdata => {
+    //check if data.JSON was found
+    console.log("JSON file read successfully!");
+
+    return JSONdata;
+}) 
+.then( JSONdata => {
+    //drop the project table if it existed
+    connection.query('DROP TABLE IF EXISTS Project', (error, data) =>
     {
-        //check if data.JSON was found
         if (error) throw error;
-        console.log("JSON file read successfully!");
+        console.log("Table successfully dropped if it existed!");
+    })
 
-        //drop the table if it exists
-        connection.query('DROP TABLE IF EXISTS Project', (error, results) =>
-            {
-                //check if we've successfully dropped the table
-                if (error) throw error;
-                console.log("Project table successfully dropped if it existed!");
-
-                //Create the table
-                connection.query( projectCreateTableSQL, (error, results) =>
-                    {
-                        //check if table is successfully created
-                        if (error) throw error;
-                        console.log("Project table successfully initiated");
-
-                        //parse JSON data
-                        const Projects = JSON.parse(data).Project;
-
-                        //Insert all data into table
-                        Projects.forEach((projectTuple) =>
-                            {
-                                const values = [projectTuple.ProjectID, projectTuple.Title, projectTuple.Finished, projectTuple.Complexity];
-
-                                //insert tuple into table
-                                connection.query(projectInsertProjectSQL, values, (error, results) =>
-                                    {
-                                        //check if tuple was successfully inserted
-                                        if (error) throw error;
-                                        console.log("Data for tuple successfully added: ", results);
-                                    })
-                            })
-
-                        connection.end(); //end the connection (if you have more tables you should move this)
-                    })
-            })
+    return JSONdata
 })
+.then( JSONdata => {
+    //create the project table
+    connection.query(projectCreateTableSQL, (error, data) =>
+    {
+        if (error) throw error;
+        console.log("Table successfully created!");
+    })
 
+    return JSONdata
+})
+.then( JSONdata => {
+    //parse JSON data
+    const Projects = JSON.parse(JSONdata).Project;
+
+    //insert all data into table
+    Projects.forEach( projectTuple => {
+        const values = [projectTuple.ProjectID, projectTuple.Title, projectTuple.Finished, projectTuple.Complexity];
+
+        connection.query(projectInsertProjectSQL, values, (error, results) => {
+            if (error) throw error;
+            console.log("tuple successfully added");
+        })
+    })
+
+    return JSONdata;
+})
+.finally(() => {connection.end()}) //after everything end the connection
+.catch(error => {console.log(error)}) //if there ever is an error console log the error
