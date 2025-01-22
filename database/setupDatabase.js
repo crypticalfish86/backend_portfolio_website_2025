@@ -5,9 +5,13 @@
 */
 
 const fs = require('fs');
-const mysql = require('mysql');
+
 
 const filepathForJSON = 'database/data.JSON';
+
+
+const connection = require('./connection.js');//create the connection to my XAMPP database (ensure its running)
+connection.connect(); //attempt to connect to the database
 
 //SQL Tables creation
 const projectCreateTableSQL =
@@ -59,17 +63,7 @@ const imagesInsertProjectSQL =
     VALUES (?, ?, ?, ?)
 `;
 
-//create the connection to my XAMPP database (ensure its running)
-const connection = mysql.createConnection(
-    {
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'portfolio'
-    }
-);
 
-connection.connect(); //attempt to connect to the database
 
 /*
     This promise chain drops all tables, recreates them and then adds all data into the database 
