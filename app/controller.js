@@ -4,12 +4,14 @@
 
 const { fetchEndpoints } = require('./model');
 
-const getEndpoints = (request, response) =>
+//returns a parsed JSON file containing all the endpoints available by this api
+const getEndpoints = (request, response, next) =>
 {
     fetchEndpoints()
     .then( JSONFile => {
         response.status(200).send(JSON.parse(JSONFile));
     })
+    .catch(error => next(error));
 }
 
 const getAllTitles = (request, response) =>

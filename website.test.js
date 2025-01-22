@@ -31,3 +31,16 @@ describe( "GET /api", () => {
         })
     })
 })
+
+describe( "GET /api/project_titles", () => {
+    it('Should return a 200 status code', async () => {
+        return request(app).get('/api/project_titles').expect(200);
+    })
+
+    it('Response body should be an array of objects', async () => {
+        return request(app).get('/api/project_titles').expect(200)
+        .then((response) => {
+            expect(Array.isArray(response.body)).toBe(true);
+        })
+    })
+})

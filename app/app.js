@@ -25,7 +25,15 @@ app.get('/api/project_titles/:title', getProjectByTitle);//return all informatio
 //any Unhandled error is caught by this at the end
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Something went wrong!' });
+
+    let status;
+    if (err.status){
+        status = err.status;
+    } else{
+        status = 500;
+    }
+    
+    res.status(status).json({ error: 'Something went wrong!' });
 });
 
 app.listen(port, () => {console.log(`Listening at http://localhost:${port}`)})
