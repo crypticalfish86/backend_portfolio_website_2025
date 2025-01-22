@@ -1,4 +1,8 @@
-const supertest = require("supertest");
+/**
+    Supertest will allow us to streamline the test HTTP requests allowing us to structure it simpler like below
+ */
+
+const request = require("supertest");
 const app = require("./app/app.js");
 
 describe( "GET /api", () => {
