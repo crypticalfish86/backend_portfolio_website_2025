@@ -1,0 +1,13 @@
+{
+    "GET /api": {
+        "description": "returns a JSON representation of all available endpoints of the api"
+    },
+
+    "GET /api/project_titles": {
+        "description": "returns an array of all project titles"
+    },
+
+    "GET /api/project_titles/:title": {
+        "description": "returns all information of a specific title (if one exists) including project_details and images"
+    }
+}
