@@ -2,17 +2,143 @@
     "Project": [
         {
             "ProjectID": 1,
-            "Title": "Test Project",
-            "Finished": "2025-01-20",
+            "Title": "Test Project 1",
+            "Finished": "2021-03-15",
             "Program": "Java",
             "Complexity": 2
         },
         {
             "ProjectID": 2,
-            "Title": "Test Project2",
-            "Finished": "2025-01-21",
+            "Title": "Test Project 2",
+            "Finished": "2022-07-22",
             "Program": "JavaScript",
             "Complexity": 4
+        },
+        {
+            "ProjectID": 3,
+            "Title": "Test Project 3",
+            "Finished": "2021-01-01",
+            "Program": "JavaScript",
+            "Complexity": 2
+        },
+        {
+            "ProjectID": 4,
+            "Title": "Test Project 4",
+            "Finished": "2023-05-10",
+            "Program": "Python",
+            "Complexity": 5
+        },
+        {
+            "ProjectID": 5,
+            "Title": "Test Project 5",
+            "Finished": "2024-08-30",
+            "Program": "PHP",
+            "Complexity": 3
+        },
+        {
+            "ProjectID": 6,
+            "Title": "Test Project 6",
+            "Finished": "2022-11-12",
+            "Program": "C#",
+            "Complexity": 4
+        },
+        {
+            "ProjectID": 7,
+            "Title": "Test Project 7",
+            "Finished": "2023-09-25",
+            "Program": "R",
+            "Complexity": 3
+        },
+        {
+            "ProjectID": 8,
+            "Title": "Test Project 8",
+            "Finished": "2025-06-05",
+            "Program": "Go",
+            "Complexity": 5
+        },
+        {
+            "ProjectID": 9,
+            "Title": "Test Project 9",
+            "Finished": "2021-12-18",
+            "Program": "Swift",
+            "Complexity": 4
+        },
+        {
+            "ProjectID": 10,
+            "Title": "Test Project 10",
+            "Finished": "2024-02-28",
+            "Program": "C++",
+            "Complexity": 5
+        },
+        {
+            "ProjectID": 11,
+            "Title": "Test Project 11",
+            "Finished": "2023-07-14",
+            "Program": "Ruby",
+            "Complexity": 3
+        },
+        {
+            "ProjectID": 12,
+            "Title": "Test Project 12",
+            "Finished": "2022-04-30",
+            "Program": "Kotlin",
+            "Complexity": 4
+        },
+        {
+            "ProjectID": 13,
+            "Title": "Test Project 13",
+            "Finished": "2021-08-15",
+            "Program": "TypeScript",
+            "Complexity": 3
+        },
+        {
+            "ProjectID": 14,
+            "Title": "Test Project 14",
+            "Finished": "2025-07-20",
+            "Program": "Python",
+            "Complexity": 5
+        },
+        {
+            "ProjectID": 15,
+            "Title": "Test Project 15",
+            "Finished": "2023-12-05",
+            "Program": "Unity",
+            "Complexity": 4
+        },
+        {
+            "ProjectID": 16,
+            "Title": "Test Project 16",
+            "Finished": "2022-05-10",
+            "Program": "Flutter",
+            "Complexity": 3
+        },
+        {
+            "ProjectID": 17,
+            "Title": "Test Project 17",
+            "Finished": "2024-06-18",
+            "Program": "Java",
+            "Complexity": 4
+        },
+        {
+            "ProjectID": 18,
+            "Title": "Test Project 18",
+            "Finished": "2021-09-25",
+            "Program": "Python",
+            "Complexity": 2
+        },
+        {
+            "ProjectID": 19,
+            "Title": "Test Project 19",
+            "Finished": "2023-03-14",
+            "Program": "JavaScript",
+            "Complexity": 5
+        },
+        {
+            "ProjectID": 20,
+            "Title": "Test Project 20",
+            "Finished": "2025-09-30",
+            "Program": "PHP",
+            "Complexity": 3
         }
     ],
 
@@ -20,12 +146,207 @@
         {
             "ProjectID": 1,
             "DetailID": 1,
-            "Description": "test1"
+            "Description": "Initial planning phase for Test Project 1."
+        },
+        {
+            "ProjectID": 1,
+            "DetailID": 2,
+            "Description": "Development of core features for Test Project 1."
+        },
+        {
+            "ProjectID": 1,
+            "DetailID": 3,
+            "Description": "Testing and debugging for Test Project 1."
         },
         {
             "ProjectID": 2,
             "DetailID": 1,
-            "Description": "test2"
+            "Description": "Initial planning phase for Test Project 2."
+        },
+        {
+            "ProjectID": 2,
+            "DetailID": 2,
+            "Description": "UI/UX design for Test Project 2."
+        },
+        {
+            "ProjectID": 3,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 3."
+        },
+        {
+            "ProjectID": 3,
+            "DetailID": 2,
+            "Description": "Backend development for Test Project 3."
+        },
+        {
+            "ProjectID": 4,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 4."
+        },
+        {
+            "ProjectID": 4,
+            "DetailID": 2,
+            "Description": "Data modeling for Test Project 4."
+        },
+        {
+            "ProjectID": 5,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 5."
+        },
+        {
+            "ProjectID": 5,
+            "DetailID": 2,
+            "Description": "API integration for Test Project 5."
+        },
+        {
+            "ProjectID": 6,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 6."
+        },
+        {
+            "ProjectID": 6,
+            "DetailID": 2,
+            "Description": "Game mechanics development for Test Project 6."
+        },
+        {
+            "ProjectID": 7,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 7."
+        },
+        {
+            "ProjectID": 7,
+            "DetailID": 2,
+            "Description": "Data visualization for Test Project 7."
+        },
+        {
+            "ProjectID": 8,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 8."
+        },
+        {
+            "ProjectID": 8,
+            "DetailID": 2,
+            "Description": "Blockchain integration for Test Project 8."
+        },
+        {
+            "ProjectID": 9,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 9."
+        },
+        {
+            "ProjectID": 9,
+            "DetailID": 2,
+            "Description": "Social media API integration for Test Project 9."
+        },
+        {
+            "ProjectID": 10,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 10."
+        },
+        {
+            "ProjectID": 10,
+            "DetailID": 2,
+            "Description": "IoT device integration for Test Project 10."
+        },
+        {
+            "ProjectID": 11,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 11."
+        },
+        {
+            "ProjectID": 11,
+            "DetailID": 2,
+            "Description": "Course content creation for Test Project 11."
+        },
+        {
+            "ProjectID": 12,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 12."
+        },
+        {
+            "ProjectID": 12,
+            "DetailID": 2,
+            "Description": "Fitness tracking algorithm development for Test Project 12."
+        },
+        {
+            "ProjectID": 13,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 13."
+        },
+        {
+            "ProjectID": 13,
+            "DetailID": 2,
+            "Description": "Booking system integration for Test Project 13."
+        },
+        {
+            "ProjectID": 14,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 14."
+        },
+        {
+            "ProjectID": 14,
+            "DetailID": 2,
+            "Description": "Stock market data analysis for Test Project 14."
+        },
+        {
+            "ProjectID": 15,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 15."
+        },
+        {
+            "ProjectID": 15,
+            "DetailID": 2,
+            "Description": "VR environment design for Test Project 15."
+        },
+        {
+            "ProjectID": 16,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 16."
+        },
+        {
+            "ProjectID": 16,
+            "DetailID": 2,
+            "Description": "Delivery tracking system for Test Project 16."
+        },
+        {
+            "ProjectID": 17,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 17."
+        },
+        {
+            "ProjectID": 17,
+            "DetailID": 2,
+            "Description": "Patient data management for Test Project 17."
+        },
+        {
+            "ProjectID": 18,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 18."
+        },
+        {
+            "ProjectID": 18,
+            "DetailID": 2,
+            "Description": "Weather data collection for Test Project 18."
+        },
+        {
+            "ProjectID": 19,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 19."
+        },
+        {
+            "ProjectID": 19,
+            "DetailID": 2,
+            "Description": "Cryptocurrency price tracking for Test Project 19."
+        },
+        {
+            "ProjectID": 20,
+            "DetailID": 1,
+            "Description": "Initial planning phase for Test Project 20."
+        },
+        {
+            "ProjectID": 20,
+            "DetailID": 2,
+            "Description": "Voting system security implementation for Test Project 20."
         }
     ],
 
@@ -33,14 +354,248 @@
         {
             "ProjectID": 1,
             "DetailID": 1,
-            "Image_Title": "Test1",
+            "Image_Title": "Initial Planning Diagram",
             "Image_URL": "Test1"
+        },
+        {
+            "ProjectID": 1,
+            "DetailID": 2,
+            "Image_Title": "Core Features Wireframe",
+            "Image_URL": "Test2"
+        },
+        {
+            "ProjectID": 1,
+            "DetailID": 3,
+            "Image_Title": "Testing Workflow",
+            "Image_URL": "Test3"
         },
         {
             "ProjectID": 2,
             "DetailID": 1,
-            "Image_Title": "Test2",
-            "Image_URL": "Test2"
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test4"
+        },
+        {
+            "ProjectID": 2,
+            "DetailID": 2,
+            "Image_Title": "UI/UX Mockup",
+            "Image_URL": "Test5"
+        },
+        {
+            "ProjectID": 3,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test6"
+        },
+        {
+            "ProjectID": 3,
+            "DetailID": 2,
+            "Image_Title": "Backend Architecture",
+            "Image_URL": "Test7"
+        },
+        {
+            "ProjectID": 4,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test8"
+        },
+        {
+            "ProjectID": 4,
+            "DetailID": 2,
+            "Image_Title": "Data Model Schema",
+            "Image_URL": "Test9"
+        },
+        {
+            "ProjectID": 5,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test10"
+        },
+        {
+            "ProjectID": 5,
+            "DetailID": 2,
+            "Image_Title": "API Flowchart",
+            "Image_URL": "Test11"
+        },
+        {
+            "ProjectID": 6,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test12"
+        },
+        {
+            "ProjectID": 6,
+            "DetailID": 2,
+            "Image_Title": "Game Mechanics Flow",
+            "Image_URL": "Test13"
+        },
+        {
+            "ProjectID": 7,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test14"
+        },
+        {
+            "ProjectID": 7,
+            "DetailID": 2,
+            "Image_Title": "Data Visualization Example",
+            "Image_URL": "Test15"
+        },
+        {
+            "ProjectID": 8,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test16"
+        },
+        {
+            "ProjectID": 8,
+            "DetailID": 2,
+            "Image_Title": "Blockchain Architecture",
+            "Image_URL": "Test17"
+        },
+        {
+            "ProjectID": 9,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test18"
+        },
+        {
+            "ProjectID": 9,
+            "DetailID": 2,
+            "Image_Title": "Social Media API Flow",
+            "Image_URL": "Test19"
+        },
+        {
+            "ProjectID": 10,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test20"
+        },
+        {
+            "ProjectID": 10,
+            "DetailID": 2,
+            "Image_Title": "IoT Device Integration",
+            "Image_URL": "Test21"
+        },
+        {
+            "ProjectID": 11,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test22"
+        },
+        {
+            "ProjectID": 11,
+            "DetailID": 2,
+            "Image_Title": "Course Content Outline",
+            "Image_URL": "Test23"
+        },
+        {
+            "ProjectID": 12,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test24"
+        },
+        {
+            "ProjectID": 12,
+            "DetailID": 2,
+            "Image_Title": "Fitness Tracking Algorithm",
+            "Image_URL": "Test25"
+        },
+        {
+            "ProjectID": 13,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test26"
+        },
+        {
+            "ProjectID": 13,
+            "DetailID": 2,
+            "Image_Title": "Booking System Flow",
+            "Image_URL": "Test27"
+        },
+        {
+            "ProjectID": 14,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test28"
+        },
+        {
+            "ProjectID": 14,
+            "DetailID": 2,
+            "Image_Title": "Stock Market Data Analysis",
+            "Image_URL": "Test29"
+        },
+        {
+            "ProjectID": 15,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test30"
+        },
+        {
+            "ProjectID": 15,
+            "DetailID": 2,
+            "Image_Title": "VR Environment Design",
+            "Image_URL": "Test31"
+        },
+        {
+            "ProjectID": 16,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test32"
+        },
+        {
+            "ProjectID": 16,
+            "DetailID": 2,
+            "Image_Title": "Delivery Tracking System",
+            "Image_URL": "Test33"
+        },
+        {
+            "ProjectID": 17,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test34"
+        },
+        {
+            "ProjectID": 17,
+            "DetailID": 2,
+            "Image_Title": "Patient Data Management",
+            "Image_URL": "Test35"
+        },
+        {
+            "ProjectID": 18,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test36"
+        },
+        {
+            "ProjectID": 18,
+            "DetailID": 2,
+            "Image_Title": "Weather Data Collection",
+            "Image_URL": "Test37"
+        },
+        {
+            "ProjectID": 19,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test38"
+        },
+        {
+            "ProjectID": 19,
+            "DetailID": 2,
+            "Image_Title": "Cryptocurrency Price Tracking",
+            "Image_URL": "Test39"
+        },
+        {
+            "ProjectID": 20,
+            "DetailID": 1,
+            "Image_Title": "Initial Planning Diagram",
+            "Image_URL": "Test40"
+        },
+        {
+            "ProjectID": 20,
+            "DetailID": 2,
+            "Image_Title": "Voting System Security",
+            "Image_URL": "Test41"
         }
     ]
 }
