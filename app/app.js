@@ -9,7 +9,7 @@ const app = express();
 const cors = require('cors');
 const port = 3000;
 
-const { getEndpoints, getAllTitles, getProjectByTitle } = require('./controller.js');
+const { getEndpoints, getAllProjects, getProjectByID } = require('./controller.js');
 
 app.use(cors());//call cors before every single api request, prevents users from making requests to different domains
 app.use(express.json());//call express.json() before every single api request, allows us to automatically parse incoming a JSON request bodies
@@ -17,9 +17,9 @@ app.use(express.json());//call express.json() before every single api request, a
 
 app.get('/api', getEndpoints); //return all endpoints possible with this api
 
-app.get('/api/project_titles', getAllTitles); //return every single project title as an array (for displaying the project files with titles)
+app.get('/api/projects', getAllProjects); //return every single projects in an array (for displaying the project files with titles)
 
-app.get('/api/project_titles/:title', getProjectByTitle);//return all information (projects, project_details, images) about one project (activated when clicking a file)
+app.get('/api/projects/:projectID', getProjectByID);//return all information (projects, project_details, images) about one project (activated when clicking a file)
 
 
 //any Unhandled error is caught by this at the end
@@ -32,7 +32,6 @@ app.use((err, req, res, next) => {
     } else{
         status = 500;
     }
-    
     res.status(status).json({ error: 'Something went wrong!' });
 });
 

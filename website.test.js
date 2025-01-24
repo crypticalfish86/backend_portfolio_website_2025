@@ -32,15 +32,39 @@ describe( "GET /api", () => {
     })
 })
 
-describe( "GET /api/project_titles", () => {
+describe( "GET /api/projects", () => {
     it('Should return a 200 status code', async () => {
-        return request(app).get('/api/project_titles').expect(200);
+        return request(app).get('/api/projects').expect(200);
     })
 
     it('Response body should be an array of objects', async () => {
-        return request(app).get('/api/project_titles').expect(200)
+        return request(app).get('/api/projects').expect(200)
         .then((response) => {
             expect(Array.isArray(response.body)).toBe(true);
         })
     })
+
+    it('Response body should contain all attributes for Project', async () => {
+        return request(app).get('/api/projects').expect(200)
+        .then((response) => {
+            response.body.forEach((tuple) => {
+                expect(tuple).toHaveProperty('ProjectID');
+                expect(tuple).toHaveProperty('Title');
+                expect(tuple).toHaveProperty('Finished');
+                expect(tuple).toHaveProperty('Program');
+                expect(tuple).toHaveProperty('Complexity')
+            })
+        })
+    })
+
+    it('Response body should filter by show_only parameters', async () => {
+        return request(app).get('/api/projects?show_only=Program&show_only_attribute=Java').expect(200)
+        .then((response) => {
+            console.log(response.body);
+            response.body.forEach((tuple) => {
+                expect(tuple.Program === 'Java');
+            })
+        })
+    })
+    //note testing is incomplete, return to it when you are free to
 })
