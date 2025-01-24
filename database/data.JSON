@@ -4,12 +4,14 @@
             "ProjectID": 1,
             "Title": "Test Project",
             "Finished": "2025-01-20",
+            "Program": "Java",
             "Complexity": 2
         },
         {
             "ProjectID": 2,
             "Title": "Test Project2",
             "Finished": "2025-01-21",
+            "Program": "JavaScript",
             "Complexity": 4
         }
     ],
