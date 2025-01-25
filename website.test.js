@@ -60,11 +60,33 @@ describe( "GET /api/projects", () => {
     it('Response body should filter by show_only parameters', async () => {
         return request(app).get('/api/projects?show_only=Program&show_only_attribute=Java').expect(200)
         .then((response) => {
-            console.log(response.body);
             response.body.forEach((tuple) => {
                 expect(tuple.Program === 'Java');
             })
         })
     })
-    //note testing is incomplete, return to it when you are free to
+
+    it('Response body should order projects in descending order when given the parameter to', async () => {
+        return request(app).get('/api/projects?sort_by=Complexity&order_by=DESC').expect(200)
+        .then((response) => {
+            let previousTupleComplexityValue = response.body[0].Complexity;
+
+            response.body.forEach((tuple) => {
+                expect(previousTupleComplexityValue >= tuple.Complexity);
+                previousTupleComplexityValue = tuple.Complexity;
+            })
+        })
+    })
+
+    it('Response body should order projects in ascending order when given the parameter to', async () => {
+        return request(app).get('/api/projects?sort_by=Date&order_by=ASC').expect(200)
+        .then((response) => {
+            let previousTupleDateValue = new Date(response.body[0].Date).getTime();
+
+            response.body.forEach((tuple) => {
+                expect(new Date(tuple.Date).getTime() >= previousTupleDateValue)
+                previousTupleDateValue = new Date(tuple.Date).getTime();
+            })
+        })
+    })
 })
