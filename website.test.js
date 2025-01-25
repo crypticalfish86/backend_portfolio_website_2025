@@ -94,3 +94,33 @@ describe( "GET /api/projects", () => {
         return request(app).get('/api/projects?sort_by=Select').expect(400);
     })
 })
+
+describe("GET /api/projects/:projectID", () => {
+    it('Should return a status code of 200', async () => {
+        return request(app).get('/api/projects/1').expect(200);
+    })
+
+    it('Should return all information about a project', async () => {
+        return request(app).get('/api/projects/2').expect(200)
+        .then((response) => {
+            response.body.forEach((tuple) => {
+                expect(tuple).toHaveProperty('Title');
+                expect(tuple).toHaveProperty('Finished');
+                expect(tuple).toHaveProperty('Program');
+                expect(tuple).toHaveProperty('Complexity');
+                expect(tuple).toHaveProperty('DetailID');
+                expect(tuple).toHaveProperty('Description');
+                expect(tuple).toHaveProperty('Image_Title');
+                expect(tuple).toHaveProperty('Image_URL');
+            })
+        })
+    })
+
+    it('Should return a 404 error when a project of that ID doesn\'t exist', async () => {
+        return request(app).get('/api/projects/10000').expect(404);
+    })
+
+    it('Should return a 400 error when SQL injection is attempted', async () => {
+        return request(app).get('/api/projects/select').expect(400);
+    })
+})

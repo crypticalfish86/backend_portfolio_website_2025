@@ -24,8 +24,6 @@ app.get('/api/projects/:projectID', getProjectByID);//return all information (pr
 
 //any Unhandled error is caught by this at the end
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-
     let status;
     if (err.status){
         status = err.status;

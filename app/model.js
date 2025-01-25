@@ -33,7 +33,7 @@ const fetchAllProjects = (queryParameters) => {
         FROM Project
     ` + showOnly + sortBy + orderBy;
 
-    /*If an SQL injection was ever attempted in the queries, reject the request with a 400 bad request code*/
+    //If an SQL injection was ever attempted in the queries, reject the request with a 400 bad request code
     if (fetchProjectsSQL.includes("SQL Injection Attempt")) {
         return Promise.reject({status: 400, msg: 'Attempted SQL injection'});
     }
@@ -52,6 +52,7 @@ const fetchAllProjects = (queryParameters) => {
         });
     });
 }
+    /*Build the show only request, rejecting if there is an SQL injection attempt*/
     function buildShowOnlyString(showOnlyParameter, showOnlyAttribute) {
         if (blackListedWord(showOnlyParameter) || blackListedWord(showOnlyAttribute)) return "SQL Injection Attempt";
 
@@ -68,6 +69,7 @@ const fetchAllProjects = (queryParameters) => {
         return "";
     }
 
+    /*Build the sort by request, rejecting if there is an SQL injection attempt*/
     function buildSortByString(sortByParameter) {
         if (blackListedWord(sortByParameter)) return "SQL Injection Attempt";
 
@@ -78,6 +80,7 @@ const fetchAllProjects = (queryParameters) => {
         return "";
     }
 
+    /*Build the order by request, rejecting if there is an SQL injection attempt*/
     function buildOrderByString(orderByParameter) {
         if (blackListedWord(orderByParameter)) return "SQL Injection Attempt";
 
@@ -104,6 +107,30 @@ const fetchAllProjects = (queryParameters) => {
         return containsBlackListedWord;
     }
 
+    //for some reason it doesn't think .then can work, figure this out
+const fetchProjectByID = (projectID) => {
+    return new Promise((resolve, reject) => {
+        if (typeof projectID !== 'string' || !/^\d+$/.test(projectID)) {
+            return reject({status: 400, msg: "Error, projectID must be an integer number"});
+        }
 
+        const fetchprojectByIDSQL = 
+        `
+        SELECT project.Title, project.Finished, project.Program, project.Complexity, project_details.DetailID, project_details.Description, images.DetailID, images.Image_Title, images.Image_URL
+        FROM project INNER JOIN project_details ON project.ProjectID = project_details.ProjectID INNER JOIN images on project_details.ProjectID = images.ProjectID
+        WHERE project.ProjectID = ${projectID} AND project_details.DetailID = images.DetailID
+        `
 
-module.exports = { fetchEndpoints, fetchAllProjects };
+        connection.query(fetchprojectByIDSQL, (error, results) => {
+            if(results.length === 0){
+                return reject({status: 404, msg: "Error, Project not found at that ID"});
+            }
+            
+            const plainResults = results.map(row => ({ ...row }));
+            console.log(plainResults);
+            resolve(plainResults);
+        })
+    })
+}
+
+module.exports = { fetchEndpoints, fetchAllProjects, fetchProjectByID };
