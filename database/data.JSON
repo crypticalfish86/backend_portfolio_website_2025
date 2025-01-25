@@ -1,140 +1,120 @@
 {
     "Project": [
         {
-            "ProjectID": 1,
             "Title": "Test Project 1",
             "Finished": "2021-03-15",
             "Program": "Java",
             "Complexity": 2
         },
         {
-            "ProjectID": 2,
             "Title": "Test Project 2",
             "Finished": "2022-07-22",
             "Program": "JavaScript",
             "Complexity": 4
         },
         {
-            "ProjectID": 3,
             "Title": "Test Project 3",
             "Finished": "2021-01-01",
             "Program": "JavaScript",
             "Complexity": 2
         },
         {
-            "ProjectID": 4,
             "Title": "Test Project 4",
             "Finished": "2023-05-10",
             "Program": "Python",
             "Complexity": 5
         },
         {
-            "ProjectID": 5,
             "Title": "Test Project 5",
             "Finished": "2024-08-30",
             "Program": "PHP",
             "Complexity": 3
         },
         {
-            "ProjectID": 6,
             "Title": "Test Project 6",
             "Finished": "2022-11-12",
             "Program": "C#",
             "Complexity": 4
         },
         {
-            "ProjectID": 7,
             "Title": "Test Project 7",
             "Finished": "2023-09-25",
             "Program": "R",
             "Complexity": 3
         },
         {
-            "ProjectID": 8,
             "Title": "Test Project 8",
             "Finished": "2025-06-05",
             "Program": "Go",
             "Complexity": 5
         },
         {
-            "ProjectID": 9,
             "Title": "Test Project 9",
             "Finished": "2021-12-18",
             "Program": "Swift",
             "Complexity": 4
         },
         {
-            "ProjectID": 10,
             "Title": "Test Project 10",
             "Finished": "2024-02-28",
             "Program": "C++",
             "Complexity": 5
         },
         {
-            "ProjectID": 11,
             "Title": "Test Project 11",
             "Finished": "2023-07-14",
             "Program": "Ruby",
             "Complexity": 3
         },
         {
-            "ProjectID": 12,
             "Title": "Test Project 12",
             "Finished": "2022-04-30",
             "Program": "Kotlin",
             "Complexity": 4
         },
         {
-            "ProjectID": 13,
             "Title": "Test Project 13",
             "Finished": "2021-08-15",
             "Program": "TypeScript",
             "Complexity": 3
         },
         {
-            "ProjectID": 14,
             "Title": "Test Project 14",
             "Finished": "2025-07-20",
             "Program": "Python",
             "Complexity": 5
         },
         {
-            "ProjectID": 15,
             "Title": "Test Project 15",
             "Finished": "2023-12-05",
             "Program": "Unity",
             "Complexity": 4
         },
         {
-            "ProjectID": 16,
             "Title": "Test Project 16",
             "Finished": "2022-05-10",
             "Program": "Flutter",
             "Complexity": 3
         },
         {
-            "ProjectID": 17,
             "Title": "Test Project 17",
             "Finished": "2024-06-18",
             "Program": "Java",
             "Complexity": 4
         },
         {
-            "ProjectID": 18,
             "Title": "Test Project 18",
             "Finished": "2021-09-25",
             "Program": "Python",
             "Complexity": 2
         },
         {
-            "ProjectID": 19,
             "Title": "Test Project 19",
             "Finished": "2023-03-14",
             "Program": "JavaScript",
             "Complexity": 5
         },
         {
-            "ProjectID": 20,
             "Title": "Test Project 20",
             "Finished": "2025-09-30",
             "Program": "PHP",

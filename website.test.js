@@ -89,4 +89,8 @@ describe( "GET /api/projects", () => {
             })
         })
     })
+
+    it('Should return a 400 error if sql injection is attempted', async () => {
+        return request(app).get('/api/projects?sort_by=Select').expect(400);
+    })
 })

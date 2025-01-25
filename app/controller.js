@@ -25,7 +25,7 @@ const getAllProjects = (request, response, next) =>
 {
     const queryParameters = request.query;
     fetchAllProjects(queryParameters)
-    .then(results => { // Correctly handle the resolved value
+    .then(results => {
         response.status(200).send(results);
     })
     .catch(error => next(error));

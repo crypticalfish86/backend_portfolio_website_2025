@@ -4,12 +4,9 @@
 const fs = require('fs').promises;
 const connection = require('../database/connection.js');
 
-
+/*Return a JSON file containing information on all the endpoints*/
 const fetchEndpoints = () => {
     return fs.readFile('./app/EndpointInfo.JSON', 'utf-8')
-        .then(file => {
-            return file; // Return the file content if the file is found
-        })
         .catch(error => {
             if (error.code === 'ENOENT') {
                 // File not found, return a 404 error
@@ -35,22 +32,28 @@ const fetchAllProjects = (queryParameters) => {
         SELECT *
         FROM Project
     ` + showOnly + sortBy + orderBy;
-    console.log(fetchProjectsSQL);
+
+    /*If an SQL injection was ever attempted in the queries, reject the request with a 400 bad request code*/
+    if (fetchProjectsSQL.includes("SQL Injection Attempt")) {
+        return Promise.reject({status: 400, msg: 'Attempted SQL injection'});
+    }
+
+
     return new Promise((resolve, reject) => {
         connection.query(fetchProjectsSQL, (error, results) => {
             if (error) {
                 console.error("Error fetching projects:", error);
                 return reject(error);
             }
-            console.log(results);
+
+            //return the plain results (just an array of objects)
             const plainResults = results.map(row => ({ ...row }));
-            console.log(plainResults);
             resolve(plainResults);
         });
     });
 }
     function buildShowOnlyString(showOnlyParameter, showOnlyAttribute) {
-        if (blackListedWord(showOnlyParameter) || blackListedWord(showOnlyAttribute)) return "";
+        if (blackListedWord(showOnlyParameter) || blackListedWord(showOnlyAttribute)) return "SQL Injection Attempt";
 
         if (showOnlyParameter === "Year") {
             return ` WHERE Finished >= \'${showOnlyAttribute}-01-01\'`;
@@ -66,7 +69,7 @@ const fetchAllProjects = (queryParameters) => {
     }
 
     function buildSortByString(sortByParameter) {
-        if (blackListedWord(sortByParameter)) return "";
+        if (blackListedWord(sortByParameter)) return "SQL Injection Attempt";
 
         if (sortByParameter === "Date") return " ORDER BY Finished";
         else if (sortByParameter === "Program") return " ORDER BY Program";
@@ -76,7 +79,7 @@ const fetchAllProjects = (queryParameters) => {
     }
 
     function buildOrderByString(orderByParameter) {
-        if (blackListedWord(orderByParameter)) return "";
+        if (blackListedWord(orderByParameter)) return "SQL Injection Attempt";
 
         if (orderByParameter === "ASC") return " ASC";
         else if (orderByParameter === "DESC") return " DESC";
@@ -87,7 +90,7 @@ const fetchAllProjects = (queryParameters) => {
 
     /*Prevents SQL injection via parameter or if the parameter is undefined*/
     function blackListedWord(parameter) {
-        if(!parameter) return true;
+        if(!parameter) return false;
 
         const blackList = ["select", "from", "where", "sort by", "order by", "having", "drop", "project", "project_details", "images", "database"];
         
