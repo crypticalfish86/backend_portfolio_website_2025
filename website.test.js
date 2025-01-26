@@ -52,7 +52,8 @@ describe( "GET /api/projects", () => {
                 expect(tuple).toHaveProperty('Title');
                 expect(tuple).toHaveProperty('Finished');
                 expect(tuple).toHaveProperty('Program');
-                expect(tuple).toHaveProperty('Complexity')
+                expect(tuple).toHaveProperty('Complexity');
+                expect(tuple).toHaveProperty('ProjectLink');
             })
         })
     })
@@ -108,6 +109,7 @@ describe("GET /api/projects/:projectID", () => {
                 expect(tuple).toHaveProperty('Finished');
                 expect(tuple).toHaveProperty('Program');
                 expect(tuple).toHaveProperty('Complexity');
+                expect(tuple).toHaveProperty('ProjectLink');
                 expect(tuple).toHaveProperty('DetailID');
                 expect(tuple).toHaveProperty('Description');
                 expect(tuple).toHaveProperty('Image_Title');

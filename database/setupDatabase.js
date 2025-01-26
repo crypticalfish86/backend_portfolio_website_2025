@@ -22,6 +22,7 @@ const projectCreateTableSQL =
         Finished DATE,
         Program VARCHAR(100),
         Complexity INT NOT NULL,
+        ProjectLink VARCHAR(255),
         PRIMARY KEY (ProjectID)
     )
 `;
@@ -38,20 +39,22 @@ const projectDetailsCreateTableSQL =
 const imagesCreateTableSQL = 
 `
     CREATE TABLE Images(
+        ImageID Int AUTO_INCREMENT,
         ProjectID INT,
         DetailID INT,
         Image_Title VARCHAR(100) NOT NULL,
         Image_URL VARCHAR(255) NOT NULL,
-        PRIMARY KEY (ProjectID, DetailID),
-        FOREIGN KEY (ProjectID, DetailID) REFERENCES Project_Details(ProjectID, DetailID)
+        PRIMARY KEY (ImageID),
+        FOREIGN KEY (ProjectID, DetailID) REFERENCES Project_Details(ProjectID, DetailID),
+        UNIQUE (Image_URL)
     )
 `
 
 //SQL Tables insertion
 const projectInsertProjectSQL =
 `
-    INSERT INTO Project (Title, Finished, Program, Complexity)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO Project (Title, Finished, Program, Complexity, ProjectLink)
+    VALUES (?, ?, ?, ?, ?)
 `;
 const projectDetailsInsertProjectSQL =
 `
@@ -112,7 +115,7 @@ fs.promises.readFile(filepathForJSON, 'utf-8')
 
     //insert all data into table
     Projects.forEach( projectTuple => {
-        const values = [projectTuple.Title, projectTuple.Finished, projectTuple.Program, projectTuple.Complexity];
+        const values = [projectTuple.Title, projectTuple.Finished, projectTuple.Program, projectTuple.Complexity, projectTuple.ProjectLink];
 
         connection.query(projectInsertProjectSQL, values, (error, results) => {
             if (error) throw error;

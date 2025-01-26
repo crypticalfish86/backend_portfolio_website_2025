@@ -116,7 +116,7 @@ const fetchProjectByID = (projectID) => {
 
         const fetchprojectByIDSQL = 
         `
-        SELECT project.Title, project.Finished, project.Program, project.Complexity, project_details.DetailID, project_details.Description, images.DetailID, images.Image_Title, images.Image_URL
+        SELECT project.Title, project.Finished, project.Program, project.Complexity, project.ProjectLink, project_details.DetailID, project_details.Description, images.DetailID, images.Image_Title, images.Image_URL
         FROM project INNER JOIN project_details ON project.ProjectID = project_details.ProjectID INNER JOIN images on project_details.ProjectID = images.ProjectID
         WHERE project.ProjectID = ${projectID} AND project_details.DetailID = images.DetailID
         `
