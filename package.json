@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "test_connection.js",
   "scripts": {
-    "test": "jest",
+    "test": "node database/setupDatabase.js & jest",
     "start": "node main.js",
     "init_db": "node database/setupDatabase.js"
   },
