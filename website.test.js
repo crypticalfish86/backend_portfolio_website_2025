@@ -126,3 +126,56 @@ describe("GET /api/projects/:projectID", () => {
         return request(app).get('/api/projects/select').expect(400);
     })
 })
+
+describe("POST /api/projects", () => {
+    it('Should return with a 400 error if the request body is empty', async () => {
+        return request(app).post('/api/projects').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, does not have required properties, new projects need at least: \'Title\', \'Complexity\' and a \'project_details\' array")
+        })
+    })
+
+    it('Should return with a 400 error if one of the neccessary attributes is missing', async () => {
+        return request(app).post('/api/projects').send({Title: 'test', Complexity: 1}).expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, does not have required properties, new projects need at least: \'Title\', \'Complexity\' and a \'project_details\' array")
+        })
+    })
+
+    it('Should return with a 400 error if project details is an empty array', async () => {
+        return request(app).post('/api/projects').send({Title: 'test', Complexity: 1, project_details: []}).expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, need at least one project_details object to add to this project")
+        })
+    })
+
+    it('Should return with a 400 error if project details doesn\'t have all neccessary details', async () => {
+        return request(app).post('/api/projects').send({Title: 'test', Complexity: 1, project_details: [{ProjectID: 1, DetailID: 1, Description: "test"}, {ProjectID: 1, Description: "test2"}]})
+        .expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, project details does not have required properties on all details, project_details need at least: \'ProjectID\',\'DetailID\',\'Description\'")
+        })
+    })
+
+    it('Should return with a 400 error if images exists and doesn\'t have all neccessary details', async () => {
+        return request(app).post('/api/projects').send({Title: 'test', Complexity: 1, project_details: [{ProjectID: 1, DetailID: 1, Description: "test"}], Images: [{ProjectID: 1, DetailID: 2}]})
+        .expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, images included that do not have required properties, images needs at least: \'ProjectID\', \'DetailID\', \'Image_Title\', \'Image_URL\'")
+        })
+    })
+
+    it('Should return a 201 status and the project you added in respones body if project is successfully added', async () => {
+        return request(app).post('/api/projects').send({Title: 'testThatShouldGoThrough', Complexity: 1, project_details: [{ProjectID: 21, DetailID: 1, Description: "testDetailsThatShouldGoThrough"}]})
+        .expect(201)
+        .then((response) => {
+            console.log(JSON.stringify(response.body));
+            expect(response.body.length).toBe(1);
+            expect(response.body[0]).toHaveProperty('Title');
+            expect(response.body[0]).toHaveProperty('Finished');
+            expect(response.body[0]).toHaveProperty('Program');
+            expect(response.body[0]).toHaveProperty('Complexity');
+            expect(response.body[0]).toHaveProperty('ProjectLink');
+        })
+    })
+})

@@ -23,14 +23,15 @@ const projectCreateTableSQL =
         Program VARCHAR(100),
         Complexity INT NOT NULL,
         ProjectLink VARCHAR(255),
-        PRIMARY KEY (ProjectID)
+        PRIMARY KEY (ProjectID),
+        UNIQUE (Title)
     )
 `;
 const projectDetailsCreateTableSQL = 
 `
     CREATE TABLE Project_Details(
-        ProjectID INT,
-        DetailID INT, 
+        ProjectID INT NOT NULL,
+        DetailID INT NOT NULL, 
         Description VARCHAR(500) NOT NULL,
         PRIMARY KEY (ProjectID, DetailID),
         FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID)
@@ -40,8 +41,8 @@ const imagesCreateTableSQL =
 `
     CREATE TABLE Images(
         ImageID Int AUTO_INCREMENT,
-        ProjectID INT,
-        DetailID INT,
+        ProjectID INT NOT NULL,
+        DetailID INT NOT NULL,
         Image_Title VARCHAR(100) NOT NULL,
         Image_URL VARCHAR(255) NOT NULL,
         PRIMARY KEY (ImageID),

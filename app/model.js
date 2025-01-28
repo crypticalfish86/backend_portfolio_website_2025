@@ -91,23 +91,8 @@ const fetchAllProjects = (queryParameters) => {
     }
 
 
-    /*Prevents SQL injection via parameter or if the parameter is undefined*/
-    function blackListedWord(parameter) {
-        if(!parameter) return false;
 
-        const blackList = ["select", "from", "where", "sort by", "order by", "having", "drop", "project", "project_details", "images", "database"];
-        
-        let containsBlackListedWord = false;
-        blackList.forEach( (blackListedWord) => {
-            if(parameter.toLowerCase().includes(blackListedWord)) {
-                containsBlackListedWord = true;
-            }
-        })
-
-        return containsBlackListedWord;
-    }
-
-    //for some reason it doesn't think .then can work, figure this out
+/*Fetch the project from the database by the projectID*/
 const fetchProjectByID = (projectID) => {
     return new Promise((resolve, reject) => {
         if (typeof projectID !== 'string' || !/^\d+$/.test(projectID)) {
@@ -127,10 +112,198 @@ const fetchProjectByID = (projectID) => {
             }
             
             const plainResults = results.map(row => ({ ...row }));
-            console.log(plainResults);
             resolve(plainResults);
         })
     })
 }
 
-module.exports = { fetchEndpoints, fetchAllProjects, fetchProjectByID };
+/*
+    minimally, projectInformation should come in looking like so:
+    {
+        Title: String,
+        Complexity: Int,
+        project_details: [{ProjectID: Int, DetailID: Int, Description: String}],
+        images: [{ProjectID: Int, DetailID: Int, Image_Title: String, Image_URL: String}]
+    }
+
+    maximally with optional attributes, project information looks like:
+    {
+        Title: String,
+        Finished: mysql Date,
+        Program: String,
+        Complexity: Int,
+        ProjectLink: String,
+        project_details: [{ProjectID: Int, DetailID: Int, Description: String}],
+        images: [{ProjectID: Int, DetailID: Int, Image_Title: String, Image_URL: String}]
+    }
+*/
+const insertNewProject = (projectInformation) => 
+{
+    console.log("Body: "+ JSON.stringify(projectInformation));
+    return new Promise((resolve, reject) => {
+        /*Check project information has all required properties*/
+        if (!hasAllRequiredProperties(projectInformation, ['Title', 'Complexity', 'project_details'])) {
+            return reject({status: 400, msg: "Error, does not have required properties, new projects need at least: \'Title\', \'Complexity\' and a \'project_details\' array"});
+        }
+
+        /*Check project information has at least one project detail*/
+        if(projectInformation.project_details.length < 1){
+            return reject({status: 400, msg: "Error, need at least one project_details object to add to this project"});
+        }
+
+        /*Check project details array ensuring every detail has required properties*/
+        let rejectedDetailsPromise = false;
+        projectInformation.project_details.forEach((detail) => {
+            if (!hasAllRequiredProperties(detail, ['ProjectID', 'DetailID', 'Description'])) {               
+                rejectedDetailsPromise = true; 
+            }
+        })
+        if (rejectedDetailsPromise){
+            return reject({status: 400, msg: "Error, project details does not have required properties on all details, project_details need at least: \'ProjectID\',\'DetailID\',\'Description\'"});
+        }
+
+        /*If images are part of the project check each image has all required properties*/
+        let rejectedImagesPromise = false;
+        if (typeof projectInformation.Images !== 'undefined') {
+            projectInformation.Images.forEach((image) => {
+                if (!hasAllRequiredProperties(image, ['ProjectID', 'DetailID', 'Image_Title', 'Image_URL'])) {
+                    rejectedImagesPromise = true;
+                }
+            })
+        }
+        if (rejectedImagesPromise) {
+            return reject({status: 400, msg: "Error, images included that do not have required properties, images needs at least: \'ProjectID\', \'DetailID\', \'Image_Title\', \'Image_URL\'"});
+        }
+
+        /*Build the Project SQL, including in optional attributes if they're present in projectInformation*/
+        let createProjectSQL = "INSERT INTO project (Title";
+        let valuesProjectSQL = ` VALUES (\'${projectInformation.Title}\'`;
+
+        if (projectInformation.Finished !== undefined) {
+            createProjectSQL += ", Finished";
+            valuesProjectSQL += `, \'${projectInformation.Finished}\'`;
+        }
+
+        if (projectInformation.Program !== undefined) {
+            createProjectSQL += ", Program";
+            valuesProjectSQL += `, \'${projectInformation.Program}\'`;
+        }
+
+        createProjectSQL += ", Complexity";
+        valuesProjectSQL += `, ${projectInformation.Complexity}`;
+
+        if (projectInformation.ProjectLink !== undefined) {
+            createProjectSQL += ", ProjectLink)";
+            valuesProjectSQL += `, \'${projectInformation.ProjectLink}\')`;
+        }
+        else {
+            createProjectSQL += ")";
+            valuesProjectSQL += ")";
+        }
+
+        const projectSQL = createProjectSQL + valuesProjectSQL;
+
+        /*Build the project_details SQL*/
+        let createProjectDetailsSQL = "INSERT INTO project_details (ProjectID, DetailID, Description) VALUES ";
+        
+        let valuesProjectDetailsSQL = ``;
+        projectInformation.project_details.forEach((detail) => {
+            valuesProjectDetailsSQL += `(${detail.ProjectID}, ${detail.DetailID}, \'${detail.Description}\'), `;
+        })
+
+        projectDetailsSQL = createProjectDetailsSQL + valuesProjectDetailsSQL.substring(0, valuesProjectDetailsSQL.length - 2);
+
+        console.log("Project SQL: " + projectSQL);
+        console.log("ProjectDetails SQL: " + projectDetailsSQL);
+
+        //MAKE THE IMAGES SQL NOW
+        let imagesSQL;
+        if(typeof projectInformation.Images !== 'undefined') {
+            let createImagesSQL = "INSERT INTO images (ProjectID, DetailID, Image_Title, Image_URL) VALUES ";
+
+            let valuesImagesSQL = ``;
+            projectInformation.Images.forEach((image) => {
+                valuesImagesSQL += `(${image.ProjectID}, ${image.DetailID}, \'${image.Image_Title}\', \'${image.Image_URL}\'), `
+            })
+
+            imagesSQL = createImagesSQL + valuesImagesSQL.substring(0, valuesImagesSQL.length - 2);
+
+            console.log("Images SQL: " + imagesSQL);
+        }
+
+
+        connection.query(projectSQL, (error, results) => {
+            if (error) {
+                return reject(error);
+            }
+
+            connection.query(projectDetailsSQL, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                if (typeof projectInformation.Images !== 'undefined') {
+                    connection.query(imagesSQL, (error, results) => {
+                        if (error) {
+                            return reject(error);
+                        }
+                        resolve(projectInformation);
+                    })
+                }
+                else {
+                    resolve(projectInformation);
+                }
+            })
+        })
+    })
+    .then((projectInformation) => {
+        return new Promise((resolve, reject) => {
+            const selectProjectSQL = 
+            `
+                SELECT project.ProjectID, project.Title, project.Finished, project.Program, project.Complexity, project.ProjectLink
+                FROM project INNER JOIN project_details ON project.ProjectID = project_details.ProjectID LEFT OUTER JOIN images ON project.ProjectID = images.ProjectID
+                WHERE project.Title = \'${projectInformation.Title}\'
+            `
+            connection.query(selectProjectSQL, (error, results) => {
+                if (error) {
+                    return reject({status: 404, msg: "Your request went through however it does not appear to be in the server"});
+                }
+    
+                return resolve(results);
+            })
+        })
+    })
+}
+
+
+
+/*Helper functions*/
+function hasAllRequiredProperties(projectInformation, propertyArray){
+        let hasAllProperties = true;
+
+        propertyArray.forEach((property) => {
+            if (!projectInformation.hasOwnProperty(property)) {
+                hasAllProperties = false;
+            }
+        })
+
+        return hasAllProperties;
+    }
+
+/*Prevents SQL injection via parameter or if the parameter is undefined*/
+function blackListedWord(parameter) {
+    if(!parameter) return false;
+
+    const blackList = ["select", "from", "where", "sort by", "order by", "having", "drop", "project", "project_details", "images", "database"];
+    
+    let containsBlackListedWord = false;
+    blackList.forEach( (blackListedWord) => {
+        if(parameter.toLowerCase().includes(blackListedWord)) {
+            containsBlackListedWord = true;
+        }
+    })
+
+    return containsBlackListedWord;
+}
+
+module.exports = { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject };
