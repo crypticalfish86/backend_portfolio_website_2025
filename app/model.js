@@ -1,5 +1,8 @@
 /*
     The model is responsible for retrieving data (via sql or file retrieval) and manipulate that data as needed for the endpoint
+
+    ADD PARAMITARIZED QUERIES AT SOME POINT BEFORE DEPLOYING API
+    (CHANGE THINGS TO connection.execute)
  */
 const fs = require('fs').promises;
 const connection = require('../database/connection.js');
@@ -112,7 +115,7 @@ const fetchProjectByID = (projectID) => {
             }
             
             const plainResults = results.map(row => ({ ...row }));
-            resolve(plainResults);
+            return resolve(plainResults);
         })
     })
 }
@@ -139,7 +142,6 @@ const fetchProjectByID = (projectID) => {
 */
 const insertNewProject = (projectInformation) => 
 {
-    console.log("Body: "+ JSON.stringify(projectInformation));
     return new Promise((resolve, reject) => {
         /*Check project information has all required properties*/
         if (!hasAllRequiredProperties(projectInformation, ['Title', 'Complexity', 'project_details'])) {
@@ -213,9 +215,6 @@ const insertNewProject = (projectInformation) =>
 
         projectDetailsSQL = createProjectDetailsSQL + valuesProjectDetailsSQL.substring(0, valuesProjectDetailsSQL.length - 2);
 
-        console.log("Project SQL: " + projectSQL);
-        console.log("ProjectDetails SQL: " + projectDetailsSQL);
-
         //MAKE THE IMAGES SQL NOW
         let imagesSQL;
         if(typeof projectInformation.Images !== 'undefined') {
@@ -228,7 +227,6 @@ const insertNewProject = (projectInformation) =>
 
             imagesSQL = createImagesSQL + valuesImagesSQL.substring(0, valuesImagesSQL.length - 2);
 
-            console.log("Images SQL: " + imagesSQL);
         }
 
 
@@ -275,10 +273,76 @@ const insertNewProject = (projectInformation) =>
     })
 }
 
+/*Update any non primary key attribute of a tuple in the project table */
+const editProjectByID = (projectID, informationToUpdate) => {
+    
+    return new Promise((resolve, reject) => {
 
+        
+
+        /*Check the projectID is an integer */
+        if (!/^-?\d+$/.test(projectID)) {
+            return reject({status: 400, msg: "Error, ProjectID must be an integer"});
+        }
+
+        /*Check there is at least one attribute the request is updating */
+        if (!hasAnyProperty(informationToUpdate, ['Title', 'Finished', 'Program', 'Complexity', 'ProjectLink'])) {
+            return reject({status: 400, msg: "Error, Please specify at least one attribute to update"});
+        }
+
+        //NOTE: SQL INJECTION FOR THIS FUNCTION ONWARDS WILL NOT BE CHECKED AS WE WILL SWITCH TO PARAMITARIZED QUERIES BEFORE DEPLOYMENT
+
+        connection.query(`SELECT * FROM project WHERE ProjectID = ${projectID}`, (error, results) => {
+            if (error) {
+                return reject(error);
+            }
+
+            if (results.length == 0) {
+                return reject ({status: 404, msg : "Error, project with that ID is not in the database"});
+            }
+
+            /*Build SQL statement */
+            let updateSQL = `UPDATE project SET`;
+            if (informationToUpdate.Title) {
+                updateSQL += ` Title = \'${informationToUpdate.Title}\',`;
+            }
+            if (informationToUpdate.Finished) {
+                updateSQL += ` Finished = \'${informationToUpdate.Finished}\',`;
+            }
+            if (informationToUpdate.Program) {
+                updateSQL += ` Program = \'${informationToUpdate.Program}\',`;
+            }
+            if (informationToUpdate.Complexity) {
+                updateSQL += ` Complexity = ${informationToUpdate.Complexity},`;
+            }
+            if (informationToUpdate.ProjectLink) {
+                updateSQL += ` ProjectLink = ${informationToUpdate.ProjectLink},`
+            }
+
+            updateSQL = updateSQL.substring(0, updateSQL.length - 1); //remove trailing comma
+
+            updateSQL += ` WHERE ProjectID = ${projectID}`;
+
+            connection.query(updateSQL, (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                connection.query(`SELECT * FROM project WHERE ProjectID = ${projectID}`, (error, results) => {
+                    if (error) {
+                        return reject (error);
+                    }
+
+                    const plainResults = results.map(row => ({ ...row }));
+                    return resolve(plainResults[0]);
+                })
+            })
+        })
+    })
+}
 
 /*Helper functions*/
-function hasAllRequiredProperties(projectInformation, propertyArray){
+function hasAllRequiredProperties(projectInformation, propertyArray) {
         let hasAllProperties = true;
 
         propertyArray.forEach((property) => {
@@ -289,6 +353,18 @@ function hasAllRequiredProperties(projectInformation, propertyArray){
 
         return hasAllProperties;
     }
+
+function hasAnyProperty(projectInformation, propertyArray) {
+    let hasAnyProperty = false;
+
+    propertyArray.forEach((property) => {
+        if (projectInformation.hasOwnProperty(property)) {
+            hasAnyProperty = true;
+        }
+    })
+
+    return hasAnyProperty;
+}
 
 /*Prevents SQL injection via parameter or if the parameter is undefined*/
 function blackListedWord(parameter) {
@@ -306,4 +382,4 @@ function blackListedWord(parameter) {
     return containsBlackListedWord;
 }
 
-module.exports = { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject };
+module.exports = { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID };

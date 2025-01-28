@@ -9,7 +9,8 @@ const app = express();
 const cors = require('cors');
 const port = 3000;
 
-const { getEndpoints, getAllProjects, getProjectByID, postNewProject, /*patchProjectByID, patchProjectDetailByID, deleteProjectByID*/ } = require('./controller.js');
+const { getEndpoints, getAllProjects, getProjectByID, postNewProject, patchProjectByID, /*patchProjectDetailByID, deleteProjectByID*/ } = require('./controller.js');
+const connection = require('../database/connection.js');
 
 app.use(cors());//call cors before every single api request, prevents users from making requests to different domains
 app.use(express.json());//call express.json() before every single api request, allows us to automatically parse incoming a JSON requests so we don't need to do it in the controller
@@ -23,7 +24,7 @@ app.get('/api/projects/:projectID', getProjectByID); //return all information (p
 
 app.post('/api/projects', postNewProject); //Add a new project to the database (with project_details and images included)
 
-//app.patch('/api/projects/:projectID', patchProjectByID); //Edit an existing project using the project ID
+app.patch('/api/projects/:projectID', patchProjectByID); //Edit an existing project using the project ID
 
 //app.patch('/api/projects/:projectID/projectDetailID', patchProjectDetailByID); //Edit an existing project details using the ProjectID and ProjectDetailID
 

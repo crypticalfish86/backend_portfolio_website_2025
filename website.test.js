@@ -169,13 +169,40 @@ describe("POST /api/projects", () => {
         return request(app).post('/api/projects').send({Title: 'testThatShouldGoThrough', Complexity: 1, project_details: [{ProjectID: 21, DetailID: 1, Description: "testDetailsThatShouldGoThrough"}]})
         .expect(201)
         .then((response) => {
-            console.log(JSON.stringify(response.body));
             expect(response.body.length).toBe(1);
             expect(response.body[0]).toHaveProperty('Title');
             expect(response.body[0]).toHaveProperty('Finished');
             expect(response.body[0]).toHaveProperty('Program');
             expect(response.body[0]).toHaveProperty('Complexity');
             expect(response.body[0]).toHaveProperty('ProjectLink');
+        })
+    })
+})
+
+describe("PATCH /api/projects/:projectID", () => {
+
+    it('Should return with a 400 error if the projectID is anything but an integer', async () => {
+        return request(app).patch('/api/projects/asdlfkjasdfl').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, ProjectID must be an integer");
+        })
+    })
+
+    it('Should return with a 400 error if the request body is empty', async () => {
+        return request(app).patch('/api/projects/1').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, Please specify at least one attribute to update");
+        })
+    })
+
+    it('Should return with a 404 error if a project by that ProjectID is not in the database', async () => {
+        return request(app).patch('/api/projects/99999').send({Title: 'test'}).expect(404)
+    })
+
+    it('Should successfully update the project with the values in the request body', async () => {
+        return request(app).patch('/api/projects/1').send({Title: 'Successfully updated!'}).expect(200)
+        .then((response) => {
+            expect(response.body.Title).toBe("Successfully updated!")
         })
     })
 })
