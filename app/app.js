@@ -24,9 +24,13 @@ app.get('/api/projects/:projectID', getProjectByID); //return all information (p
 
 app.post('/api/projects', postNewProject); //Add a new project to the database (with project_details and images included)
 
+//app.post('/api/images/:DetailID, postNewImageOnDetailByID); //Add a new image to a project_detail (max 4)
+
 app.patch('/api/projects/:projectID', patchProjectByID); //Edit an existing project using the project ID
 
 //app.patch('/api/projects/:projectID/projectDetailID', patchProjectDetailByID); //Edit an existing project details using the ProjectID and ProjectDetailID
+
+//app.patch('/api/images/:ImageID, editImageByID); //Edit an image by imageID
 
 //app.delete('/api/projects/:projectID', deleteProjectByID); //Delete a project by its project ID
 
