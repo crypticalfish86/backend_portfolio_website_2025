@@ -2,11 +2,15 @@
     Controller is responsible for handling incoming requests, processing the input of those requests and sending the responses
 */
 
-const { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID, editProjectDetailByID } = require('./model');
+const { editProjectDetailByID } = require('./model/Detail_model');
+const { fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID } = require('./model/Project_model');
 
 const fs = require('fs').promises;
 
-/*Return a parsed JSON file containing information on all the endpoints*/
+/*
+    GET /api 
+    Return a parsed JSON file containing information on all the endpoints
+*/
 const getEndpoints = (request, response, next) =>
 {
     fs.readFile('./app/EndpointInfo.JSON', 'utf-8')
