@@ -4,14 +4,22 @@
 
 const { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID, editProjectDetailByID } = require('./model');
 
-//returns a parsed JSON file containing all the endpoints available by this api
+const fs = require('fs').promises;
+
+/*Return a parsed JSON file containing information on all the endpoints*/
 const getEndpoints = (request, response, next) =>
 {
-    fetchEndpoints()
+    fs.readFile('./app/EndpointInfo.JSON', 'utf-8')
     .then( JSONFile => {
         response.status(200).send(JSON.parse(JSONFile));
     })
-    .catch(error => next(error));
+    .catch(error => {
+        if(error.code === 'ENOENT') {
+            next({status: 404, msg: 'Endpoint JSON file not found'})
+        } else {
+            next({status: 500, msg: 'Internal Server Error'})
+        }
+    });
 }
 
 /*

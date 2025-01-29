@@ -8,28 +8,16 @@
         -REFACTOR TO .THEN PROMISES TO IMPROVE READABILITY (and therefore maintainability)
 
  */
-const fs = require('fs').promises;
 const connection = require('../database/connection.js');
 
-/*Return a JSON file containing information on all the endpoints*/
-const fetchEndpoints = () => {
-    return fs.readFile('./app/EndpointInfo.JSON', 'utf-8')
-        .catch(error => {
-            if (error.code === 'ENOENT') {
-                // File not found, return a 404 error
-                return Promise.reject({ status: 404, msg: 'Endpoint JSON file not found' });
-            } else {
-                // Other errors (e.g., permission issues), return a 500 error
-                return Promise.reject({ status: 500, msg: 'Internal Server Error' });
-            }
-        });
-};
 
 /*
+    GET '/api/projects'
     Fetches all Projects (with included query parameters if you want to limit your viewing)
 */
 const fetchAllProjects = (queryParameters) => {
 
+    //build the strings for extra parameters (sorting/filtering)
     let showOnly = buildShowOnlyString(queryParameters.show_only, queryParameters.show_only_attribute);
     let sortBy = buildSortByString(queryParameters.sort_by);
     let orderBy = buildOrderByString(queryParameters.order_by);
