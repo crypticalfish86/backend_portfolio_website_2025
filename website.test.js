@@ -206,3 +206,49 @@ describe("PATCH /api/projects/:projectID", () => {
         })
     })
 })
+
+describe("PATCH /api/projectDetail/:projectID/:projectDetailID", () => {
+    it('Should return with a 400 error if the projectID is anything but an integer', async () => {
+        return request(app).patch('/api/projectDetail/asdf/1').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, ProjectID must be an integer")
+        })
+    })
+
+    it('Should return with a 400 error if the projectDetailID is anything but an integer', async () => {
+        return request(app).patch('/api/projectDetail/1/asdf').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, ProjectDetailID must be an integer")
+        })
+    })
+
+
+    it('Should return with a 400 error if the request body does not contain a new description', async () => {
+        return request(app).patch('/api/projectDetail/1/1').send().expect(400)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, Project Detail must include a description");
+        })
+    })
+
+    it('Should return with a 404 error if a detail with that ProjectID is not in the database', async () => {
+        return request(app).patch('/api/projectDetail/99999/1').send({Description: 'test'}).expect(404)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, detail with that ProjectID and DetailID is not in the database");
+        })
+    })
+
+    it('Should return with a 404 error if a detail with that DetailID of that ProjectID is not in the database', async () => {
+        return request(app).patch('/api/projectDetail/1/99999').send({Description: 'test'}).expect(404)
+        .then((response) => {
+            expect(response.body.error).toBe("Error, detail with that ProjectID and DetailID is not in the database");
+        })
+    })
+
+    it('Should successfully update an image free request body with a new description', async () => {
+        return request(app).patch('/api/projectDetail/1/1').send({Description: 'Successfully updated No img'}).expect(200);
+    })
+
+    it('Should successfully update an request body with both description and images', async () => {
+        return request(app).patch('/api/projectDetail/1/1').send({Description: 'Successfully updated with img', Images: [{Title: 'img1', URL: 'URL1'}, {Title: 'img2', URL: "URL2"}]}).expect(200)
+    })
+})

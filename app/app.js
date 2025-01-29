@@ -9,7 +9,7 @@ const app = express();
 const cors = require('cors');
 const port = 3000;
 
-const { getEndpoints, getAllProjects, getProjectByID, postNewProject, patchProjectByID, /*patchProjectDetailByID, deleteProjectByID*/ } = require('./controller.js');
+const { getEndpoints, getAllProjects, getProjectByID, postNewProject, patchProjectByID, patchProjectDetailByID, /*patchImageByID, deleteProjectByID*/ } = require('./controller.js');
 const connection = require('../database/connection.js');
 
 app.use(cors());//call cors before every single api request, prevents users from making requests to different domains
@@ -24,15 +24,15 @@ app.get('/api/projects/:projectID', getProjectByID); //return all information (p
 
 app.post('/api/projects', postNewProject); //Add a new project to the database (with project_details and images included)
 
-//app.post('/api/images/:DetailID, postNewImageOnDetailByID); //Add a new image to a project_detail (max 4)
-
 app.patch('/api/projects/:projectID', patchProjectByID); //Edit an existing project using the project ID
 
-//app.patch('/api/projects/:projectID/projectDetailID', patchProjectDetailByID); //Edit an existing project details using the ProjectID and ProjectDetailID
+app.patch('/api/projectDetail/:projectID/:projectDetailID', patchProjectDetailByID); //Edit an existing project details using the ProjectID and ProjectDetailID
 
-//app.patch('/api/images/:ImageID, editImageByID); //Edit an image by imageID
+//app.patch('/api/images/:projectID/:projectDetailID/:imageID', patchImageByDetailAndImageID); //Edit an existing image using the ProjectID, ProjectDetailID and imageID
 
 //app.delete('/api/projects/:projectID', deleteProjectByID); //Delete a project by its project ID
+
+//app.delete('/api/projectDetail/:projectID/:projectDetailID', deleteProjectDetailByID); 
 
 //any Unhandled error is caught by this at the end
 app.use((err, req, res, next) => {

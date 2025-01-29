@@ -32,7 +32,7 @@ const projectDetailsCreateTableSQL =
     CREATE TABLE Project_Details(
         ProjectID INT NOT NULL,
         DetailID INT NOT NULL, 
-        Description VARCHAR(500) NOT NULL,
+        Description VARCHAR(2400) NOT NULL,
         PRIMARY KEY (ProjectID, DetailID),
         FOREIGN KEY (ProjectID) REFERENCES Project(ProjectID)
     )

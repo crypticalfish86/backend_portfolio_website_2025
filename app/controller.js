@@ -2,7 +2,7 @@
     Controller is responsible for handling incoming requests, processing the input of those requests and sending the responses
 */
 
-const { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID } = require('./model');
+const { fetchEndpoints, fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID, editProjectDetailByID } = require('./model');
 
 //returns a parsed JSON file containing all the endpoints available by this api
 const getEndpoints = (request, response, next) =>
@@ -65,4 +65,16 @@ const patchProjectByID = (request, response, next) =>
     .catch(error => next(error));
 }
 
-module.exports = { getEndpoints, getAllProjects, getProjectByID, postNewProject, patchProjectByID };
+const patchProjectDetailByID = (request, response, next) =>
+{
+    const projectID = request.params.projectID;
+    const projectDetailID = request.params.projectDetailID;
+    const informationToUpdate = request.body;
+    editProjectDetailByID(projectID, projectDetailID, informationToUpdate)
+    .then(updatedDetail => {
+        response.status(200).send(updatedDetail);
+    })
+    .catch(error => next(error));
+}
+
+module.exports = { getEndpoints, getAllProjects, getProjectByID, postNewProject, patchProjectByID, patchProjectDetailByID };
