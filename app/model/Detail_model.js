@@ -10,89 +10,88 @@
  */
 const connection = require('../../database/connection.js');
 
-/*Replaces a project_detail with new description and images (note for front end: requires COMPLETE replacement so new description, image title and image url)*/
+/*
+    PATCH /api/projectDetail/:projectID/:projectDetailID
+    Replaces a project_detail with new description and images (note for front end: requires COMPLETE replacement so new description, image title and image url)
+*/
 const editProjectDetailByID = (projectID, projectDetailID, informationToUpdate) => {
     return new Promise((resolve, reject) => {
-        
-        /*Check the projectID is an integer */
+        // Validate projectID and projectDetailID are integers
         if (!/^-?\d+$/.test(projectID)) {
-            return reject({status: 400, msg: "Error, ProjectID must be an integer"});
+            return reject({ status: 400, msg: "Error, ProjectID must be an integer" });
         }
-
-        /*Check the projectDetailID is an integer */
         if (!/^-?\d+$/.test(projectDetailID)) {
-            return reject({status: 400, msg: "Error, ProjectDetailID must be an integer"});
+            return reject({ status: 400, msg: "Error, ProjectDetailID must be an integer" });
         }
 
-        if(!hasAllRequiredProperties(informationToUpdate, ['Description'])) {
-            return reject({status: 400, msg: "Error, Project Detail must include a description"});
+        // Validate that the required properties are present
+        if (!hasAllRequiredProperties(informationToUpdate, ['Description'])) {
+            return reject({ status: 400, msg: "Error, Project Detail must include a description" });
         }
 
-
-        connection.query(`SELECT * FROM project_details WHERE ProjectID = ${projectID} AND DetailID = ${projectDetailID}`, (error, results) => {
+        // Check if the project detail exists
+        const selectDetailSQL = `SELECT * FROM project_details WHERE ProjectID = ? AND DetailID = ?`;
+        connection.query(selectDetailSQL, [projectID, projectDetailID], (error, results) => {
             if (error) {
                 return reject(error);
             }
-            
-            /*Check if that detail exists*/
+
             if (results.length === 0) {
-                return reject ({status: 404, msg : "Error, detail with that ProjectID and DetailID is not in the database"});
+                return reject({ status: 404, msg: "Error, detail with that ProjectID and DetailID is not in the database" });
             }
 
-            updateSQL = 
-            `
+            // Update the project detail description
+            const updateDetailSQL = `
                 UPDATE project_details 
-                SET Description = \'${informationToUpdate.Description}\'
-                WHERE ProjectID = ${projectID} AND DetailID = ${projectDetailID};
-            `
+                SET Description = ?
+                WHERE ProjectID = ? AND DetailID = ?;
+            `;
+            const updateDetailParams = [informationToUpdate.Description, projectID, projectDetailID];
 
-            connection.query(updateSQL, (error, results) => {
+            connection.query(updateDetailSQL, updateDetailParams, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
 
-                /*return the updated detail id in the database */
-                connection.query(`SELECT * FROM project_details WHERE ProjectID = ${projectID} AND DetailID = ${projectDetailID}`, (error, results) => {
+                // If no images are provided, resolve the promise
+                if (typeof informationToUpdate.Images === 'undefined') {
+                    return resolve();
+                }
+
+                // Delete all images associated with the projectID and detailID
+                const deleteImagesSQL = `DELETE FROM images WHERE ProjectID = ? AND DetailID = ?`;
+                connection.query(deleteImagesSQL, [projectID, projectDetailID], (error, results) => {
                     if (error) {
                         return reject(error);
                     }
 
+                    // Insert the new images
+                    const insertImagePromises = informationToUpdate.Images.map((image) => {
+                        const insertImageSQL = `
+                            INSERT INTO Images (ProjectID, DetailID, Image_Title, Image_URL) 
+                            VALUES (?, ?, ?, ?)
+                        `;
+                        const insertImageParams = [projectID, projectDetailID, image.Title, image.URL];
 
-                    if(typeof informationToUpdate.Images === 'undefined') {
-                        return resolve();
-                    }
-                    else {
-                        /*remove all images associated with projectID+detailID in database */
-                        connection.query(`DELETE FROM images WHERE ProjectID = ${projectID} AND DetailID = ${projectDetailID}`, (error, results) => {
-                            if (error) {
-                                return reject(error);
-                            }
+                        return new Promise((resolve, reject) => {
+                            connection.query(insertImageSQL, insertImageParams, (error, results) => {
+                                if (error) {
+                                    return reject(error);
+                                }
+                                resolve();
+                            });
+                        });
+                    });
 
-                            /*Change the URL and Image title */
-
-                            for (let i = 0; i < informationToUpdate.Images.length; i++){                                
-                                let imageInsertionSQL = 
-                                `
-                                    INSERT INTO Images (ProjectID, DetailID, Image_Title, Image_URL) 
-                                    VALUES (${projectID}, ${projectDetailID}, \'${informationToUpdate.Images[i].Title}\', \'${informationToUpdate.Images[i].URL}\')
-                                `
-    
-                                connection.query(imageInsertionSQL, (error, results) => {
-                                    if (error) {
-                                        return reject(error);
-                                    }
-                                    else if(i == informationToUpdate.Images.length - 1){
-                                        return resolve();
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            })
-        })
-    })
-}
+                    // Wait for all image insertions to complete
+                    Promise.all(insertImagePromises)
+                        .then(() => resolve())
+                        .catch((error) => reject(error));
+                });
+            });
+        });
+    });
+};
 
 /*Helper functions*/
 function hasAllRequiredProperties(projectInformation, propertyArray) {
