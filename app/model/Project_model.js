@@ -141,12 +141,15 @@ const fetchProjectByID = (projectID) => {
 }
 
 /*
+    POST /api/projects
+
+    Inserts a new project into the database
+
     minimally, projectInformation should come in looking like so:
     {
         Title: String,
         Complexity: Int,
         project_details: [{ProjectID: Int, DetailID: Int, Description: String}],
-        images: [{ProjectID: Int, DetailID: Int, Image_Title: String, Image_URL: String}]
     }
 
     maximally with optional attributes, project information looks like:
@@ -156,141 +159,140 @@ const fetchProjectByID = (projectID) => {
         Program: String,
         Complexity: Int,
         ProjectLink: String,
-        project_details: [{ProjectID: Int, DetailID: Int, Description: String}],
-        images: [{ProjectID: Int, DetailID: Int, Image_Title: String, Image_URL: String}]
+        project_details: [{ProjectID: Int, DetailID: Int, Description: String}, ...],
+        images: [{ProjectID: Int, DetailID: Int, Image_Title: String, Image_URL: String}, ...]
     }
 */
-const insertNewProject = (projectInformation) => 
-{
+const insertNewProject = (projectInformation) => {
     return new Promise((resolve, reject) => {
-        /*Check project information has all required properties*/
+        // Validate required properties
         if (!hasAllRequiredProperties(projectInformation, ['Title', 'Complexity', 'project_details'])) {
-            return reject({status: 400, msg: "Error, does not have required properties, new projects need at least: \'Title\', \'Complexity\' and a \'project_details\' array"});
+            return reject({ status: 400, msg: "Error, does not have required properties, new projects need at least: 'Title', 'Complexity' and a 'project_details' array" });
         }
 
-        /*Check project information has at least one project detail*/
-        if(projectInformation.project_details.length < 1){
-            return reject({status: 400, msg: "Error, need at least one project_details object to add to this project"});
+        // Validate at least one project detail
+        if (projectInformation.project_details.length < 1) {
+            return reject({ status: 400, msg: "Error, need at least one project_details object to add to this project" });
         }
 
-        /*Check project details array ensuring every detail has required properties*/
-        let rejectedDetailsPromise = false;
-        projectInformation.project_details.forEach((detail) => {
-            if (!hasAllRequiredProperties(detail, ['ProjectID', 'DetailID', 'Description'])) {               
-                rejectedDetailsPromise = true; 
+        // Validate project details
+        for (const detail of projectInformation.project_details) {
+            if (!hasAllRequiredProperties(detail, ['ProjectID', 'DetailID', 'Description'])) {
+                return reject({ status: 400, msg: "Error, project details does not have required properties on all details, project_details need at least: 'ProjectID','DetailID','Description'" });
             }
-        })
-        if (rejectedDetailsPromise){
-            return reject({status: 400, msg: "Error, project details does not have required properties on all details, project_details need at least: \'ProjectID\',\'DetailID\',\'Description\'"});
         }
 
-        /*If images are part of the project check each image has all required properties*/
-        let rejectedImagesPromise = false;
-        if (typeof projectInformation.Images !== 'undefined') {
-            projectInformation.Images.forEach((image) => {
+        // Validate images if present
+        if (projectInformation.Images) {
+            for (const image of projectInformation.Images) {
                 if (!hasAllRequiredProperties(image, ['ProjectID', 'DetailID', 'Image_Title', 'Image_URL'])) {
-                    rejectedImagesPromise = true;
+                    return reject({ status: 400, msg: "Error, images included that do not have required properties, images needs at least: 'ProjectID', 'DetailID', 'Image_Title', 'Image_URL'" });
                 }
-            })
-        }
-        if (rejectedImagesPromise) {
-            return reject({status: 400, msg: "Error, images included that do not have required properties, images needs at least: \'ProjectID\', \'DetailID\', \'Image_Title\', \'Image_URL\'"});
+            }
         }
 
-        /*Build the Project SQL, including in optional attributes if they're present in projectInformation*/
+        //Build projectParams queries
+        const projectParams = [];
+
+        // Build the Project SQL with parameterized queries
         let createProjectSQL = "INSERT INTO project (Title";
-        let valuesProjectSQL = ` VALUES (\'${projectInformation.Title}\'`;
+        let valuesProjectSQL = " VALUES (?";
+        projectParams.push(projectInformation.Title);
 
         if (projectInformation.Finished !== undefined) {
             createProjectSQL += ", Finished";
-            valuesProjectSQL += `, \'${projectInformation.Finished}\'`;
+            valuesProjectSQL += ", ?";
+            projectParams.push(projectInformation.Finished);
         }
 
         if (projectInformation.Program !== undefined) {
             createProjectSQL += ", Program";
-            valuesProjectSQL += `, \'${projectInformation.Program}\'`;
+            valuesProjectSQL += ", ?";
+            projectParams.push(projectInformation.Program);
         }
 
         createProjectSQL += ", Complexity";
-        valuesProjectSQL += `, ${projectInformation.Complexity}`;
+        valuesProjectSQL += ", ?";
+        projectParams.push(projectInformation.Complexity);
 
         if (projectInformation.ProjectLink !== undefined) {
             createProjectSQL += ", ProjectLink)";
-            valuesProjectSQL += `, \'${projectInformation.ProjectLink}\')`;
-        }
-        else {
+            valuesProjectSQL += ", ?)";
+            projectParams.push(projectInformation.ProjectLink);
+        } else {
             createProjectSQL += ")";
             valuesProjectSQL += ")";
         }
 
         const projectSQL = createProjectSQL + valuesProjectSQL;
 
-        /*Build the project_details SQL*/
+        // Build the project_details SQL with parameterized queries
         let createProjectDetailsSQL = "INSERT INTO project_details (ProjectID, DetailID, Description) VALUES ";
-        
-        let valuesProjectDetailsSQL = ``;
-        projectInformation.project_details.forEach((detail) => {
-            valuesProjectDetailsSQL += `(${detail.ProjectID}, ${detail.DetailID}, \'${detail.Description}\'), `;
-        })
+        const projectDetailsParams = [];
+        const projectDetailsValues = projectInformation.project_details.map(detail => {
+            projectDetailsParams.push(detail.ProjectID, detail.DetailID, detail.Description);
+            return "(?, ?, ?)";
+        }).join(", ");
 
-        projectDetailsSQL = createProjectDetailsSQL + valuesProjectDetailsSQL.substring(0, valuesProjectDetailsSQL.length - 2);
+        const projectDetailsSQL = createProjectDetailsSQL + projectDetailsValues;
 
+        // Build the images SQL with parameterized queries (if images are present)
         let imagesSQL;
-        if(typeof projectInformation.Images !== 'undefined') {
+        const imagesParams = [];
+        if (projectInformation.Images) {
             let createImagesSQL = "INSERT INTO images (ProjectID, DetailID, Image_Title, Image_URL) VALUES ";
+            const imagesValues = projectInformation.Images.map(image => {
+                imagesParams.push(image.ProjectID, image.DetailID, image.Image_Title, image.Image_URL);
+                return "(?, ?, ?, ?)";
+            }).join(", ");
 
-            let valuesImagesSQL = ``;
-            projectInformation.Images.forEach((image) => {
-                valuesImagesSQL += `(${image.ProjectID}, ${image.DetailID}, \'${image.Image_Title}\', \'${image.Image_URL}\'), `
-            })
-
-            imagesSQL = createImagesSQL + valuesImagesSQL.substring(0, valuesImagesSQL.length - 2);
-
+            imagesSQL = createImagesSQL + imagesValues;
         }
 
-
-        connection.query(projectSQL, (error, results) => {
+        // Execute the queries in sequence
+        connection.query(projectSQL, projectParams, (error, results) => {
             if (error) {
                 return reject(error);
             }
 
-            connection.query(projectDetailsSQL, (error, results) => {
+            connection.query(projectDetailsSQL, projectDetailsParams, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
 
-                if (typeof projectInformation.Images !== 'undefined') {
-                    connection.query(imagesSQL, (error, results) => {
+                if (imagesSQL) {
+                    connection.query(imagesSQL, imagesParams, (error, results) => {
                         if (error) {
                             return reject(error);
                         }
                         resolve(projectInformation);
-                    })
-                }
-                else {
+                    });
+                } else {
                     resolve(projectInformation);
                 }
-            })
-        })
+            });
+        });
     })
     .then((projectInformation) => {
         return new Promise((resolve, reject) => {
-            const selectProjectSQL = 
-            `
+            // Fetch the newly inserted project using parameterized queries
+            const selectProjectSQL = `
                 SELECT project.ProjectID, project.Title, project.Finished, project.Program, project.Complexity, project.ProjectLink
-                FROM project INNER JOIN project_details ON project.ProjectID = project_details.ProjectID LEFT OUTER JOIN images ON project.ProjectID = images.ProjectID
-                WHERE project.Title = \'${projectInformation.Title}\'
-            `
-            connection.query(selectProjectSQL, (error, results) => {
+                FROM project
+                INNER JOIN project_details ON project.ProjectID = project_details.ProjectID
+                LEFT OUTER JOIN images ON project.ProjectID = images.ProjectID
+                WHERE project.Title = ?
+            `;
+            connection.query(selectProjectSQL, [projectInformation.Title], (error, results) => {
                 if (error) {
-                    return reject({status: 404, msg: "Your request went through however it does not appear to be in the server"});
+                    return reject({ status: 404, msg: "Your request went through, however, it does not appear to be in the server" });
                 }
-    
-                return resolve(results);
-            })
-        })
-    })
-}
+
+                resolve(results);
+            });
+        });
+    });
+};
 
 /*Update any non primary key attribute of a tuple in the project table */
 const editProjectByID = (projectID, informationToUpdate) => {
