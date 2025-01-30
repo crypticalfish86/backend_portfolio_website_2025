@@ -119,20 +119,4 @@ function hasAnyProperty(projectInformation, propertyArray) {
     return hasAnyProperty;
 }
 
-/*Prevents SQL injection via parameter or if the parameter is undefined*/
-function blackListedWord(parameter) {
-    if(!parameter) return false;
-
-    const blackList = ["select", "from", "where", "sort by", "order by", "having", "drop", "project", "project_details", "images", "database"];
-    
-    let containsBlackListedWord = false;
-    blackList.forEach( (blackListedWord) => {
-        if(parameter.toLowerCase().includes(blackListedWord)) {
-            containsBlackListedWord = true;
-        }
-    })
-
-    return containsBlackListedWord;
-}
-
 module.exports = { editProjectDetailByID };
