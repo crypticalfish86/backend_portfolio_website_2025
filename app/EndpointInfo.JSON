@@ -3,11 +3,23 @@
         "description": "returns a JSON representation of all available endpoints of the api"
     },
 
-    "GET /api/project_titles": {
-        "description": "returns an array of all project titles"
+    "GET /api/projects": {
+        "description": "returns every single project in an array (for displaying the project files with titles)"
     },
 
-    "GET /api/project_titles/:title": {
-        "description": "returns all information of a specific title (if one exists) including project_details and images"
+    "GET /api/projects/:projectID": {
+        "description": "returns all information (projects, project_details, images) about one project (activated when clicking a file)"
+    },
+
+    "POST /api/projects": {
+        "description": "adds a new project to the database (with project_details and images included)"
+    },
+
+    "PATCH /api/projects/:projectID": {
+        "description": "edits an existing project using the project ID"
+    },
+
+    "PATCH /api/projectDetail/:projectID/:projectDetailID": {
+        "description": "edits an existing project detail using the ProjectID and ProjectDetailID"
     }
 }

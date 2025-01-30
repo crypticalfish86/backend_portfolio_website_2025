@@ -26,8 +26,11 @@ describe( "GET /api", () => {
         .then((response) => {
             expect(typeof response.body).toBe('object');
             expect(response.body).toHaveProperty('GET /api', expect.any(Object));
-            expect(response.body).toHaveProperty('GET /api/project_titles', expect.any(Object));
-            expect(response.body).toHaveProperty('GET /api/project_titles/:title', expect.any(Object));
+            expect(response.body).toHaveProperty('GET /api/projects', expect.any(Object));
+            expect(response.body).toHaveProperty('GET /api/projects/:projectID', expect.any(Object));
+            expect(response.body).toHaveProperty('POST /api/projects', expect.any(Object));
+            expect(response.body).toHaveProperty('PATCH /api/projects/:projectID', expect.any(Object));
+            expect(response.body).toHaveProperty('PATCH /api/projectDetail/:projectID/:projectDetailID', expect.any(Object));
         })
     })
 })
