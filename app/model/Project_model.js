@@ -149,7 +149,7 @@ const fetchProjectByID = (projectID) => {
     {
         Title: String,
         Complexity: Int,
-        project_details: [{ProjectID: Int, DetailID: Int, Description: String}],
+        project_details: [{ProjectID: Int, DetailID: Int, Description: String}]
     }
 
     maximally with optional attributes, project information looks like:
@@ -294,74 +294,84 @@ const insertNewProject = (projectInformation) => {
     });
 };
 
-/*Update any non primary key attribute of a tuple in the project table */
+/*
+    PATCH /api/projects/:projectID
+    Update any non primary key attribute of a tuple in the project table 
+*/
 const editProjectByID = (projectID, informationToUpdate) => {
-    
     return new Promise((resolve, reject) => {
-
-        
-
-        /*Check the projectID is an integer */
+        // Validate projectID is an integer
         if (!/^-?\d+$/.test(projectID)) {
-            return reject({status: 400, msg: "Error, ProjectID must be an integer"});
+            return reject({ status: 400, msg: "Error, ProjectID must be an integer" });
         }
 
-        /*Check there is at least one attribute the request is updating */
+        // Check if there is at least one attribute to update
         if (!hasAnyProperty(informationToUpdate, ['Title', 'Finished', 'Program', 'Complexity', 'ProjectLink'])) {
-            return reject({status: 400, msg: "Error, Please specify at least one attribute to update"});
+            return reject({ status: 400, msg: "Error, Please specify at least one attribute to update" });
         }
 
-        //NOTE: SQL INJECTION FOR THIS FUNCTION ONWARDS WILL NOT BE CHECKED AS WE WILL SWITCH TO PARAMITARIZED QUERIES BEFORE DEPLOYMENT
-
-        connection.query(`SELECT * FROM project WHERE ProjectID = ${projectID}`, (error, results) => {
+        // Fetch the project to ensure it exists
+        const selectProjectSQL = `SELECT * FROM project WHERE ProjectID = ?`;
+        connection.query(selectProjectSQL, [projectID], (error, results) => {
             if (error) {
                 return reject(error);
             }
 
-            if (results.length == 0) {
-                return reject ({status: 404, msg : "Error, project with that ID is not in the database"});
+            if (results.length === 0) {
+                return reject({ status: 404, msg: "Error, project with that ID is not in the database" });
             }
 
-            /*Build SQL statement */
+            // Build the UPDATE SQL statement with parameterized queries
             let updateSQL = `UPDATE project SET`;
+            const updateParams = [];
+
             if (informationToUpdate.Title) {
-                updateSQL += ` Title = \'${informationToUpdate.Title}\',`;
+                updateSQL += ` Title = ?,`;
+                updateParams.push(informationToUpdate.Title);
             }
             if (informationToUpdate.Finished) {
-                updateSQL += ` Finished = \'${informationToUpdate.Finished}\',`;
+                updateSQL += ` Finished = ?,`;
+                updateParams.push(informationToUpdate.Finished);
             }
             if (informationToUpdate.Program) {
-                updateSQL += ` Program = \'${informationToUpdate.Program}\',`;
+                updateSQL += ` Program = ?,`;
+                updateParams.push(informationToUpdate.Program);
             }
             if (informationToUpdate.Complexity) {
-                updateSQL += ` Complexity = ${informationToUpdate.Complexity},`;
+                updateSQL += ` Complexity = ?,`;
+                updateParams.push(informationToUpdate.Complexity);
             }
             if (informationToUpdate.ProjectLink) {
-                updateSQL += ` ProjectLink = ${informationToUpdate.ProjectLink},`
+                updateSQL += ` ProjectLink = ?,`;
+                updateParams.push(informationToUpdate.ProjectLink);
             }
 
-            updateSQL = updateSQL.substring(0, updateSQL.length - 1); //remove trailing comma
+            // Remove the trailing comma
+            updateSQL = updateSQL.substring(0, updateSQL.length - 1);
 
-            updateSQL += ` WHERE ProjectID = ${projectID}`;
+            // Add the WHERE clause
+            updateSQL += ` WHERE ProjectID = ?`;
+            updateParams.push(projectID);
 
-            /*Execute the update*/
-            connection.query(updateSQL, (error, results) => {
+            // Execute the UPDATE query
+            connection.query(updateSQL, updateParams, (error, results) => {
                 if (error) {
                     return reject(error);
                 }
 
-                /*Select the project again and return it in the response.body*/
-                connection.query(`SELECT * FROM project WHERE ProjectID = ${projectID}`, (error, results) => {
+                // Fetch the updated project and return it
+                const selectUpdatedProjectSQL = `SELECT * FROM project WHERE ProjectID = ?`;
+                connection.query(selectUpdatedProjectSQL, [projectID], (error, results) => {
                     if (error) {
-                        return reject (error);
+                        return reject(error);
                     }
 
                     const plainResults = results.map(row => ({ ...row }));
                     return resolve(plainResults[0]);
-                })
-            })
-        })
-    })
-}
+                });
+            });
+        });
+    });
+};
 
 module.exports = { fetchAllProjects, fetchProjectByID, insertNewProject, editProjectByID }
