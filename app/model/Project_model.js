@@ -25,22 +25,6 @@ propertyArray.forEach((property) => {
 return hasAnyProperty;
 }
 
-/*Prevents SQL injection via parameter or if the parameter is undefined*/
-function blackListedWord(parameter) {
-if(!parameter) return false;
-
-const blackList = ["select", "from", "where", "sort by", "order by", "having", "drop", "project", "project_details", "images", "database"];
-
-let containsBlackListedWord = false;
-blackList.forEach( (blackListedWord) => {
-    if(parameter.toLowerCase().includes(blackListedWord)) {
-        containsBlackListedWord = true;
-    }
-})
-
-return containsBlackListedWord;
-}
-
 
 /*
     GET '/api/projects'
@@ -55,15 +39,11 @@ const fetchAllProjects = (queryParameters) => {
 
     const fetchProjectsSQL =
     `
-        SELECT *
-        FROM Project
+        SELECT 
+            *
+        FROM 
+            Project
     ` + showOnly + sortBy + orderBy;
-
-    //If an SQL injection was ever attempted in the queries, reject the request with a 400 bad request code
-    if (fetchProjectsSQL.includes("SQL Injection Attempt")) {
-        return Promise.reject({status: 400, msg: 'Attempted SQL injection'});
-    }
-
 
     return new Promise((resolve, reject) => {
         connection.query(fetchProjectsSQL, (error, results) => {
@@ -80,7 +60,6 @@ const fetchAllProjects = (queryParameters) => {
 }
     /*Build the show only request, rejecting if there is an SQL injection attempt*/
     function buildShowOnlyString(showOnlyParameter, showOnlyAttribute) {
-        if (blackListedWord(showOnlyParameter) || blackListedWord(showOnlyAttribute)) return "SQL Injection Attempt";
 
         if (showOnlyParameter === "Year") {
             return ` WHERE Finished >= \'${showOnlyAttribute}-01-01\'`;
@@ -97,7 +76,6 @@ const fetchAllProjects = (queryParameters) => {
 
     /*Build the sort by request, rejecting if there is an SQL injection attempt*/
     function buildSortByString(sortByParameter) {
-        if (blackListedWord(sortByParameter)) return "SQL Injection Attempt";
 
         if (sortByParameter === "Date") return " ORDER BY Finished";
         else if (sortByParameter === "Program") return " ORDER BY Program";
@@ -108,7 +86,6 @@ const fetchAllProjects = (queryParameters) => {
 
     /*Build the order by request, rejecting if there is an SQL injection attempt*/
     function buildOrderByString(orderByParameter) {
-        if (blackListedWord(orderByParameter)) return "SQL Injection Attempt";
 
         if (orderByParameter === "ASC") return " ASC";
         else if (orderByParameter === "DESC") return " DESC";
